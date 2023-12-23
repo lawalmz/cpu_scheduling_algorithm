@@ -37,6 +37,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+
+//   Having issue with the inner switch statement when wrong option is clicked the loop malfunction 
+
     do
     {
         std::string text = "CPU Scheduler Simulator";
