@@ -38,11 +38,11 @@ int main(int argc, char *argv[])
     }
 
 
-//   Having issue with the inner switch statement when wrong option is clicked the loop malfunction 
+//   Added input validation for 'option' and 'p_choose' to ensure they are within the valid range and handle invalid input.
 
     do
     {
-        std::string text = "CPU Scheduler Simulator";
+        string text = "CPU Scheduler Simulator";
         int totalWidth = 80; 
         int padding = (totalWidth - text.length()) / 2;
 
@@ -55,11 +55,10 @@ int main(int argc, char *argv[])
         cout << "Option > ";
         cin >> choice;
 
-        switch (choice)
+       
+        if (choice == 1)
         {
-        case 1:
-            cout << "\n"
-                 << endl;
+            cout << "\n"<< endl;
             cout << " 1) First Come, First Served Scheduling" << endl;
             cout << " 2) Shortest-Job-First Scheduling " << endl;
             cout << " 3) Priority Scheduling " << endl;
@@ -71,55 +70,77 @@ int main(int argc, char *argv[])
             cout << "Option> ";
             cin >> option;
 
-            switch (option)
+      
+            while (cin.fail() || (option < 1 || option > 4))
             {
-            case 1:
+                cout << "Invalid input. Please enter a valid option (1-4): ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin >> option;
+            }
 
-                break;
-            case 2:
-
-                break;
-            case 3:
-
-                break;
-            case 4:
-
-                break;
-            default:
+            if (option == 1)
+            {
+                
+            }
+            else if (option == 2)
+            {
+               
+            }
+            else if (option == 3)
+            {
+                
+            }
+            else if (option == 4)
+            {
+                
+            }
+            else
+            {
                 cout << "Invalid sub-menu option. Please try again." << std::endl;
             }
-            break;
-
-        case 2:
-            cout << "\n"
-                 << endl;
+        }
+        else if (choice == 2)
+        {
+            cout << "\n"<< endl;
             cout << "1)ON" << endl;
             cout << "2)OFF" << endl;
-            cout << "\n"
-                 << endl;
+            cout << "\n"<< endl;
             cout << "Option> ";
             cin >> p_choose;
-            switch (p_choose)
+            if (p_choose < 1 || p_choose > 2 || cin.fail())
             {
-            case 1:
-                p = "ON";
-                break;
-            case 2:
-                p = "OFF";
-                break;
-            default:
-                cout << "Invalid sub-menu option. Please try again." << std::endl;
-                break;
+                cout << "Invalid input. Please enter a valid option (1-2): ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin >> p_choose;
             }
-            break;
-
-        case 3:
+          
+            if (p_choose == 1)
+            {
+                p ="ON";
+            }
+            else if (p_choose == 2)
+            {
+                p = "OFF";
+            }
+            else
+            {
+                cout << "Invalid sub-menu option. Please try again." << std::endl;
+            }
+        }
+        else if (choice == 3)
+        {
             cout << "show result is choosed " << endl;
-
-        case 4:
-            cout << "Thank you progam end" << endl;
-            break;
-        default:
+           
+        }
+        else if (choice == 4)
+        {
+            cout << "Thank you program end" << endl;
+            
+        }
+        else
+        {
             cout << "Invalid choice. Please try again." << endl;
         }
 
