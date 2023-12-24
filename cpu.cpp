@@ -1,7 +1,42 @@
+/* 
+
+Note that to compile the project you have to use  "g++ -std=c++11 cpu.cpp -o cpu" because the
+compiler is configured to use an older version of C++ (pre-C++11) where range-based for loops are not supported
+
+
+*/
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 using namespace std;
+
+struct Job
+{
+    int burstTime;
+    int arrivalTime;
+    int priority;
+};
+
+void writeToFile(const vector<Job> &jobs, const char *filename)
+{
+    ofstream outputFile(filename);
+
+    if (outputFile.is_open())
+    {
+        for (const Job &job : jobs)
+        {
+            outputFile << job.burstTime << ":" << job.arrivalTime << ":" << job.priority << endl;
+        }
+
+        outputFile.close();
+        cout << "Data written to " << filename << endl;
+    }
+    else
+    {
+        cerr << "Unable to open output file." << endl;
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -12,7 +47,7 @@ int main(int argc, char *argv[])
 
     if (argc != 5)
     {
-        cerr << "Usage: " << argv[0] << " -f input.txt -o output.txt" << std::endl;
+        cerr << "Usage: " << argv[0] << " -f input.txt -o output.txt" << endl;
         return 1;
     }
 
@@ -37,17 +72,17 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
-//   Added input validation for 'option' and 'p_choose' to ensure they are within the valid range and handle invalid input.
+    vector<Job> jobs;
 
     do
     {
         string text = "CPU Scheduler Simulator";
-        int totalWidth = 80; 
+        int totalWidth = 80;
         int padding = (totalWidth - text.length()) / 2;
 
-        cout << "\n"<< endl;
-        cout << setw(padding + text.length()) << text << endl;
+        cout << "\n"
+             << endl;
+        cout << text << endl;
         cout << "1) Scheduling Method (None)" << endl;
         cout << "2) Preemptive Mode (" + p + ")" << endl;
         cout << "3) Show Result" << endl;
@@ -55,22 +90,18 @@ int main(int argc, char *argv[])
         cout << "Option > ";
         cin >> choice;
 
-       
         if (choice == 1)
         {
-            cout << "\n"<< endl;
+            cout << "\n"
+                 << endl;
             cout << " 1) First Come, First Served Scheduling" << endl;
             cout << " 2) Shortest-Job-First Scheduling " << endl;
             cout << " 3) Priority Scheduling " << endl;
-            cout << " 4) Round-Robin Scheduling\n"
-                 << endl;
-            cout << "\n"
-                 << endl;
-
+            cout << " 4) Round-Robin Scheduling\n"<< endl;
+            cout << "\n" << endl;
             cout << "Option> ";
             cin >> option;
 
-      
             while (cin.fail() || (option < 1 || option > 4))
             {
                 cout << "Invalid input. Please enter a valid option (1-4): ";
@@ -82,30 +113,50 @@ int main(int argc, char *argv[])
             if (option == 1)
             {
                 
+                ifstream inputFileStream(inputFile);
+                if (inputFileStream.is_open())
+                {
+                    int burst, arrival, priority;
+                    char delimiter;
+                    while (inputFileStream >> burst >> delimiter >> arrival >> delimiter >> priority)
+                    {
+                        jobs.push_back({burst, arrival, priority});
+                    }
+
+                    inputFileStream.close();
+                    cout << "Data loaded successfully." << endl;
+                    writeToFile(jobs, outputFile);
+                }
+                else
+                {
+                    cerr << "Unable to open input file." << endl;
+                }
             }
             else if (option == 2)
             {
-               
+                cout<<"Shortest-Job-First Scheduling "<<endl;
             }
             else if (option == 3)
             {
-                
+                cout<<"Priority Scheduling "<<endl;
             }
             else if (option == 4)
             {
-                
+                 cout<<"Round-Robin Scheduling "<<endl;
             }
             else
             {
-                cout << "Invalid sub-menu option. Please try again." << std::endl;
+                cout << "Invalid sub-menu option. Please try again." << endl;
             }
         }
         else if (choice == 2)
         {
-            cout << "\n"<< endl;
+            cout << "\n"
+                 << endl;
             cout << "1)ON" << endl;
             cout << "2)OFF" << endl;
-            cout << "\n"<< endl;
+            cout << "\n"
+                 << endl;
             cout << "Option> ";
             cin >> p_choose;
             if (p_choose < 1 || p_choose > 2 || cin.fail())
@@ -115,10 +166,10 @@ int main(int argc, char *argv[])
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cin >> p_choose;
             }
-          
+
             if (p_choose == 1)
             {
-                p ="ON";
+                p = "ON";
             }
             else if (p_choose == 2)
             {
@@ -126,18 +177,16 @@ int main(int argc, char *argv[])
             }
             else
             {
-                cout << "Invalid sub-menu option. Please try again." << std::endl;
+                cout << "Invalid sub-menu option. Please try again." << endl;
             }
         }
         else if (choice == 3)
         {
-            cout << "show result is choosed " << endl;
-           
+            cout << "show result is chosen " << endl;
         }
         else if (choice == 4)
         {
             cout << "Thank you program end" << endl;
-            
         }
         else
         {
