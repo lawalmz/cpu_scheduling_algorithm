@@ -18,15 +18,63 @@ struct Job
     int priority;
 };
 
-void writeToFile(const vector<Job> &jobs, const char *filename)
+void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
+{
+   
+    Job* newJob = new Job{burstTime, arrivalTime, priority};
+
+    if (head == nullptr)
+    {
+        head = newJob;
+    }
+    else
+    {
+        Job* current = head;
+        while (current->next != nullptr)
+        {
+            current = current->next;
+        }
+        current->next = newJob;
+    }
+}
+
+
+// Function to print the linked list to test if is working 
+void printLinkedList(const Job* head)
+{
+    const Job* current = head;
+    while (current != nullptr)
+    {
+        cout << "Burst Time: " << current->burstTime
+             << ", Arrival Time: " << current->arrivalTime
+             << ", Priority: " << current->priority << endl;
+        current = current->next;
+    }
+}
+
+// freeLinkedList Function to free the memory allocated for the linked list
+void freeLinkedList(Job*& head)
+{
+    while (head != nullptr)
+    {
+        Job* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+// Function to write the linked list to a file
+void writeLinkedListToFile(const Job* head, const char* filename)
 {
     ofstream outputFile(filename);
 
     if (outputFile.is_open())
     {
-        for (const Job &job : jobs)
+        const Job* current = head;
+        while (current != nullptr)
         {
-            outputFile << job.burstTime << ":" << job.arrivalTime << ":" << job.priority << endl;
+            outputFile << current->burstTime << ":" << current->arrivalTime << ":" << current->priority << endl;
+            current = current->next;
         }
 
         outputFile.close();
@@ -35,6 +83,28 @@ void writeToFile(const vector<Job> &jobs, const char *filename)
     else
     {
         cerr << "Unable to open output file." << endl;
+    }
+}
+
+// Function to load jobs from a file into a linked list
+void loadJobsFromFile(const char* inputFile, Job*& head)
+{
+    ifstream inputFileStream(inputFile);
+    if (inputFileStream.is_open())
+    {
+        int burst, arrival, priority;
+        char delimiter;
+        while (inputFileStream >> burst >> delimiter >> arrival >> delimiter >> priority)
+        {
+            addJob(head, burst, arrival, priority);
+        }
+
+        inputFileStream.close();
+        cout << "Data loaded successfully." << endl;
+    }
+    else
+    {
+        cerr << "Unable to open input file." << endl;
     }
 }
 
@@ -72,7 +142,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    vector<Job> jobs;
+     Job* jobs = nullptr;
 
     do
     {
@@ -112,25 +182,10 @@ int main(int argc, char *argv[])
 
             if (option == 1)
             {
-                
-                ifstream inputFileStream(inputFile);
-                if (inputFileStream.is_open())
-                {
-                    int burst, arrival, priority;
-                    char delimiter;
-                    while (inputFileStream >> burst >> delimiter >> arrival >> delimiter >> priority)
-                    {
-                        jobs.push_back({burst, arrival, priority});
-                    }
-
-                    inputFileStream.close();
-                    cout << "Data loaded successfully." << endl;
-                    writeToFile(jobs, outputFile);
-                }
-                else
-                {
-                    cerr << "Unable to open input file." << endl;
-                }
+                loadJobsFromFile(inputFile, jobs);
+                writeLinkedListToFile(jobs, outputFile);
+                printLinkedList(jobs);
+                freeLinkedList(jobs);
             }
             else if (option == 2)
             {
