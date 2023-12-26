@@ -8,7 +8,9 @@ compiler is configured to use an older version of C++ (pre-C++11) where range-ba
 
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <limits>
+#include <string>
+
 using namespace std;
 
 struct Job
@@ -16,12 +18,12 @@ struct Job
     int burstTime;
     int arrivalTime;
     int priority;
+    Job* next; 
 };
 
 void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
 {
-   
-    Job* newJob = new Job{burstTime, arrivalTime, priority};
+    Job* newJob = new Job{burstTime, arrivalTime, priority, nullptr};
 
     if (head == nullptr)
     {
@@ -37,7 +39,6 @@ void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
         current->next = newJob;
     }
 }
-
 
 // Function to print the linked list to test if is working 
 void printLinkedList(const Job* head)
@@ -108,7 +109,7 @@ void loadJobsFromFile(const char* inputFile, Job*& head)
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int choice;
     int option;
@@ -121,8 +122,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    const char *inputFile = nullptr;
-    const char *outputFile = nullptr;
+    const char* inputFile = nullptr;
+    const char* outputFile = nullptr;
 
     for (int i = 1; i < argc; ++i)
     {
@@ -142,8 +143,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-     Job* jobs = nullptr;
-
+    Job* jobs = nullptr; 
     do
     {
         string text = "CPU Scheduler Simulator";
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
         cout << "\n"
              << endl;
-        cout << text << endl;
+        cout << setw(padding + text.length()) << text << endl;
         cout << "1) Scheduling Method (None)" << endl;
         cout << "2) Preemptive Mode (" + p + ")" << endl;
         cout << "3) Show Result" << endl;
@@ -167,8 +167,10 @@ int main(int argc, char *argv[])
             cout << " 1) First Come, First Served Scheduling" << endl;
             cout << " 2) Shortest-Job-First Scheduling " << endl;
             cout << " 3) Priority Scheduling " << endl;
-            cout << " 4) Round-Robin Scheduling\n"<< endl;
-            cout << "\n" << endl;
+            cout << " 4) Round-Robin Scheduling\n"
+                 << endl;
+            cout << "\n"
+                 << endl;
             cout << "Option> ";
             cin >> option;
 
@@ -189,15 +191,15 @@ int main(int argc, char *argv[])
             }
             else if (option == 2)
             {
-                cout<<"Shortest-Job-First Scheduling "<<endl;
+                cout << "Shortest-Job-First Scheduling " << endl;
             }
             else if (option == 3)
             {
-                cout<<"Priority Scheduling "<<endl;
+                cout << "Priority Scheduling " << endl;
             }
             else if (option == 4)
             {
-                 cout<<"Round-Robin Scheduling "<<endl;
+                cout << "Round-Robin Scheduling " << endl;
             }
             else
             {
