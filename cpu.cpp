@@ -15,15 +15,17 @@ using namespace std;
 
 struct Job
 {
-    int burstTime;
+     int burstTime;
     int arrivalTime;
     int priority;
+    int waiting_time; 
     Job* next; 
 };
 
 void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
 {
-    Job* newJob = new Job{burstTime, arrivalTime, priority, nullptr};
+   
+    Job* newJob = new Job{burstTime, arrivalTime, priority, 0, nullptr}; 
 
     if (head == nullptr)
     {
