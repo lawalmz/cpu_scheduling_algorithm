@@ -66,28 +66,7 @@ void freeLinkedList(Job*& head)
     }
 }
 
-// Function to write the linked list to a file
-void writeLinkedListToFile(const Job* head, const char* filename)
-{
-    ofstream outputFile(filename);
 
-    if (outputFile.is_open())
-    {
-        const Job* current = head;
-        while (current != nullptr)
-        {
-            outputFile << current->burstTime << ":" << current->arrivalTime << ":" << current->priority << endl;
-            current = current->next;
-        }
-
-        outputFile.close();
-        cout << "Data written to " << filename << endl;
-    }
-    else
-    {
-        cerr << "Unable to open output file." << endl;
-    }
-}
 
 // Function to load jobs from a file into a linked list
 void loadJobsFromFile(const char* inputFile, Job*& head)
@@ -109,6 +88,24 @@ void loadJobsFromFile(const char* inputFile, Job*& head)
     {
         cerr << "Unable to open input file." << endl;
     }
+}
+
+
+
+void FCFS(Job *head)
+{
+    float totalWaitingTime = 0;
+    int currentTime = 0;
+    Job *current = head;
+
+    while (current != nullptr)
+    {
+        current->waiting_time = max(0, currentTime - current->arrivalTime);
+        totalWaitingTime += current->waiting_time;
+        currentTime += current->burstTime;
+        current = current->next;
+    }
+    cout<<totalWaitingTime;
 }
 
 int main(int argc, char* argv[])
@@ -187,8 +184,7 @@ int main(int argc, char* argv[])
             if (option == 1)
             {
                 loadJobsFromFile(inputFile, jobs);
-                writeLinkedListToFile(jobs, outputFile);
-                printLinkedList(jobs);
+                FCFS(jobs);
                 freeLinkedList(jobs);
             }
             else if (option == 2)
