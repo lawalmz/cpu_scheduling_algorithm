@@ -1,4 +1,4 @@
-/* 
+/*
 
 Note that to compile the project you have to use  "g++ -std=c++11 cpu.cpp -o cpu" because the
 compiler is configured to use an older version of C++ (pre-C++11) where range-based for loops are not supported
@@ -15,17 +15,17 @@ using namespace std;
 
 struct Job
 {
-     int burstTime;
+    int burstTime;
     int arrivalTime;
     int priority;
-    int waiting_time; 
-    Job* next; 
+    int waiting_time;
+    Job *next;
 };
 
-void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
+void addJob(Job *&head, int burstTime, int arrivalTime, int priority)
 {
-   
-    Job* newJob = new Job{burstTime, arrivalTime, priority, 0, nullptr}; 
+
+    Job *newJob = new Job{burstTime, arrivalTime, priority, 0, nullptr};
 
     if (head == nullptr)
     {
@@ -33,7 +33,7 @@ void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
     }
     else
     {
-        Job* current = head;
+        Job *current = head;
         while (current->next != nullptr)
         {
             current = current->next;
@@ -42,10 +42,10 @@ void addJob(Job*& head, int burstTime, int arrivalTime, int priority)
     }
 }
 
-// Function to print the linked list to test if is working 
-void printLinkedList(const Job* head)
+// Function to print the linked list to test if is working
+void printLinkedList(const Job *head)
 {
-    const Job* current = head;
+    const Job *current = head;
     while (current != nullptr)
     {
         cout << "Burst Time: " << current->burstTime
@@ -56,20 +56,18 @@ void printLinkedList(const Job* head)
 }
 
 // freeLinkedList Function to free the memory allocated for the linked list
-void freeLinkedList(Job*& head)
+void freeLinkedList(Job *&head)
 {
     while (head != nullptr)
     {
-        Job* temp = head;
+        Job *temp = head;
         head = head->next;
         delete temp;
     }
 }
 
-
-
 // Function to load jobs from a file into a linked list
-void loadJobsFromFile(const char* inputFile, Job*& head)
+void loadJobsFromFile(const char *inputFile, Job *&head)
 {
     ifstream inputFileStream(inputFile);
     if (inputFileStream.is_open())
@@ -82,7 +80,7 @@ void loadJobsFromFile(const char* inputFile, Job*& head)
         }
 
         inputFileStream.close();
-        cout << "Data loaded successfully." << endl;
+       
     }
     else
     {
@@ -90,11 +88,14 @@ void loadJobsFromFile(const char* inputFile, Job*& head)
     }
 }
 
-
-
 void FCFS(Job *head)
 {
     float totalWaitingTime = 0;
+    int processCount = 0;
+    cout << "\nScheduling Method: First Come First Serve" << endl;
+      cout << "Process Waiting Times:\n"
+           << endl;
+
     int currentTime = 0;
     Job *current = head;
 
@@ -102,13 +103,20 @@ void FCFS(Job *head)
     {
         current->waiting_time = max(0, currentTime - current->arrivalTime);
         totalWaitingTime += current->waiting_time;
+        processCount++;
+
+        cout << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
         currentTime += current->burstTime;
         current = current->next;
     }
-    cout<<totalWaitingTime;
+
+    cout<< "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+    
+    cout << "FCFS is Successfully calculated :)" << endl;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int choice;
     int option;
@@ -121,8 +129,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    const char* inputFile = nullptr;
-    const char* outputFile = nullptr;
+    const char *inputFile = nullptr;
+    const char *outputFile = nullptr;
 
     for (int i = 1; i < argc; ++i)
     {
@@ -142,7 +150,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    Job* jobs = nullptr; 
+    Job *jobs = nullptr;
     do
     {
         string text = "CPU Scheduler Simulator";
