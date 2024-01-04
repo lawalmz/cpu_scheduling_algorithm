@@ -88,12 +88,14 @@ void loadJobsFromFile(const char *inputFile, Job *&head)
     }
 }
 
-void FCFS(Job *head)
+void FCFS(Job *head,const char *outputFile)
 {
     float totalWaitingTime = 0;
     int processCount = 0;
-    cout << "\nScheduling Method: First Come First Serve" << endl;
-      cout << "Process Waiting Times:\n"
+    ofstream myfile(outputFile, ios_base::app);
+     myfile<<"\n==============================================\n"<<endl;
+     myfile << "Scheduling Method: First Come First Serve" << endl;
+       myfile<< "Process Waiting Times:\n"
            << endl;
 
     int currentTime = 0;
@@ -105,15 +107,38 @@ void FCFS(Job *head)
         totalWaitingTime += current->waiting_time;
         processCount++;
 
-        cout << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+         myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
 
         currentTime += current->burstTime;
         current = current->next;
     }
 
-    cout<< "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+     myfile<< "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
     
     cout << "FCFS is Successfully calculated :)" << endl;
+}
+
+void ShowResult(const char* outputFile)
+{
+    ifstream file(outputFile);
+
+    if (file.is_open())
+    {
+        string line;
+        cout << "\nBelow are the result:\n" << endl;
+       
+
+        while (getline(file, line))
+        {
+            cout << line << endl;
+        }
+
+        file.close();
+    }
+    else
+    {
+        cerr << "Unable to open output file." << endl;
+    }
 }
 
 int main(int argc, char *argv[])
@@ -192,7 +217,7 @@ int main(int argc, char *argv[])
             if (option == 1)
             {
                 loadJobsFromFile(inputFile, jobs);
-                FCFS(jobs);
+                FCFS(jobs,outputFile);
                 freeLinkedList(jobs);
             }
             else if (option == 2)
@@ -245,7 +270,7 @@ int main(int argc, char *argv[])
         }
         else if (choice == 3)
         {
-            cout << "show result is chosen " << endl;
+            ShowResult(outputFile);
         }
         else if (choice == 4)
         {
