@@ -270,7 +270,17 @@ void PriorityNonPreemptive(Job *head, const char *outputFile)
     int currentTime = 0;
     Job *current = head;
 
-   
+    while (current != nullptr)
+    {
+        current->waiting_time = max(0, currentTime - current->arrivalTime);
+        totalWaitingTime += current->waiting_time;
+        processCount++;
+
+        myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+        currentTime += current->burstTime;
+        current = current->next;
+    }
 
     myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
 
@@ -371,7 +381,12 @@ int main(int argc, char *argv[])
             }
             else if (option == 3)
             {
-                cout << "Priority Scheduling " << endl;
+               if (p == "OFF")
+                {
+                    loadJobsFromFile(inputFile, jobs);
+                   PriorityNonPreemptive(jobs, outputFile);
+                    freeLinkedList(jobs);
+                }
             }
             else if (option == 4)
             {

@@ -38,3 +38,8 @@ P4: 10 ms
 P5: 13 ms
 
 Average Waiting Time: 6.8 ms
+==============================================
+
+Scheduling Method: Priority Scheduling - Non-Preemptive
+Process Waiting Times:
+
