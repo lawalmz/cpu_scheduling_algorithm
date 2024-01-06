@@ -220,6 +220,20 @@ void SJFNonPreemptive(Job *head, const char *outputFile)
     cout << "Shortest Job First - Non-Preemptive is Successfully calculated :)" << endl;
 }
 
+Job *sortByPriority(Job *head)
+{
+    Job *sorted = nullptr;
+
+    while (head != nullptr)
+    {
+       
+    }
+
+    return sorted;
+}
+
+
+
 int main(int argc, char *argv[])
 {
     int choice;
