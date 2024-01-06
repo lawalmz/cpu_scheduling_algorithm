@@ -224,9 +224,29 @@ Job *sortByPriority(Job *head)
 {
     Job *sorted = nullptr;
 
-    while (head != nullptr)
+    for (Job *i = head; i != nullptr; i = i->next)
     {
-       
+        Job *lastSorted = nullptr;
+        for (Job *j = head; j != lastSorted && j->next != nullptr; j = j->next)
+        {
+            if (j->next != nullptr && j->priority > j->next->priority)
+            {
+                if (j == head)
+                {
+                    head = j->next;
+                    j->next = head->next;
+                    head->next = j;
+                }
+                else
+                {
+                    Job *temp = j->next;
+                    j->next = temp->next;
+                    temp->next = j;
+                    lastSorted->next = temp;
+                }
+            }
+            lastSorted = j;
+        }
     }
 
     return sorted;
