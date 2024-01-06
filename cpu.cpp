@@ -253,6 +253,33 @@ Job *sortByPriority(Job *head)
 }
 
 
+void PriorityNonPreemptive(Job *head, const char *outputFile)
+{
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: Priority Scheduling - Non-Preemptive" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
+
+    // Sort the jobs by priority
+    head = sortByPriority(head);
+
+    int currentTime = 0;
+    Job *current = head;
+
+   
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "Priority Scheduling - Non-Preemptive is Successfully calculated :)" << endl;
+}
+
+
+
+
 
 int main(int argc, char *argv[])
 {
