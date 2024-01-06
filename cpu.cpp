@@ -80,7 +80,6 @@ void loadJobsFromFile(const char *inputFile, Job *&head)
         }
 
         inputFileStream.close();
-       
     }
     else
     {
@@ -88,14 +87,15 @@ void loadJobsFromFile(const char *inputFile, Job *&head)
     }
 }
 
-void FCFS(Job *head,const char *outputFile)
+void FCFS(Job *head, const char *outputFile)
 {
     float totalWaitingTime = 0;
     int processCount = 0;
     ofstream myfile(outputFile, ios_base::app);
-     myfile<<"\n==============================================\n"<<endl;
-     myfile << "Scheduling Method: First Come First Serve" << endl;
-       myfile<< "Process Waiting Times:\n"
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: First Come First Serve" << endl;
+    myfile << "Process Waiting Times:\n"
            << endl;
 
     int currentTime = 0;
@@ -107,26 +107,26 @@ void FCFS(Job *head,const char *outputFile)
         totalWaitingTime += current->waiting_time;
         processCount++;
 
-         myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+        myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
 
         currentTime += current->burstTime;
         current = current->next;
     }
 
-     myfile<< "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
-    
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
     cout << "FCFS is Successfully calculated :)" << endl;
 }
 
-void ShowResult(const char* outputFile)
+void ShowResult(const char *outputFile)
 {
     ifstream file(outputFile);
 
     if (file.is_open())
     {
         string line;
-        cout << "\nBelow are the result:\n" << endl;
-       
+        cout << "\nBelow are the result:\n"
+             << endl;
 
         while (getline(file, line))
         {
@@ -141,45 +141,38 @@ void ShowResult(const char* outputFile)
     }
 }
 
-
-
-
-
-
-Job* sortJobsByArrivalAndBurstTime(Job* head)
+Job *sortJobsByArrivalAndBurstTime(Job *head)
 {
     if (head == nullptr || head->next == nullptr)
     {
-       
+
         return head;
     }
 
-   
-    for (Job* i = head; i != nullptr; i = i->next)
+    for (Job *i = head; i != nullptr; i = i->next)
     {
-       
-        Job* lastSorted = nullptr;
 
-       
-        for (Job* j = head; j != lastSorted && j->next != nullptr; j = j->next)
+        Job *lastSorted = nullptr;
+
+        for (Job *j = head; j != lastSorted && j->next != nullptr; j = j->next)
         {
-           
+
             if (j->next != nullptr &&
                 (j->arrivalTime > j->next->arrivalTime ||
                  (j->arrivalTime == j->next->arrivalTime && j->burstTime > j->next->burstTime)))
             {
-              
+
                 if (j == head)
                 {
-                   
+
                     head = j->next;
                     j->next = head->next;
                     head->next = j;
                 }
                 else
                 {
-                   
-                    Job* temp = j->next;
+
+                    Job *temp = j->next;
                     j->next = temp->next;
                     temp->next = j;
                     lastSorted->next = temp;
@@ -192,7 +185,40 @@ Job* sortJobsByArrivalAndBurstTime(Job* head)
     return head;
 }
 
+void SJFNonPreemptive(Job *head, const char *outputFile)
+{
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: Shortest Job First - Non-Preemptive" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
 
+    // Sort the jobs by burst time
+    head = sortJobsByArrivalAndBurstTime(head);
+    // head = sortJobsByBurstTime(head);
+
+    int currentTime = 0;
+    Job *current = head;
+
+    while (current != nullptr)
+    {
+        current->waiting_time = max(0, currentTime - current->arrivalTime);
+        totalWaitingTime += current->waiting_time;
+        processCount++;
+
+        myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+        currentTime += current->burstTime;
+        current = current->next;
+    }
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "Shortest Job First - Non-Preemptive is Successfully calculated :)" << endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -270,12 +296,17 @@ int main(int argc, char *argv[])
             if (option == 1)
             {
                 loadJobsFromFile(inputFile, jobs);
-                FCFS(jobs,outputFile);
+                FCFS(jobs, outputFile);
                 freeLinkedList(jobs);
             }
             else if (option == 2)
             {
-                cout << "Shortest-Job-First Scheduling " << endl;
+                if (p == "OFF")
+                {
+                    loadJobsFromFile(inputFile, jobs);
+                    SJFNonPreemptive(jobs, outputFile);
+                    freeLinkedList(jobs);
+                }
             }
             else if (option == 3)
             {
