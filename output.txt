@@ -56,3 +56,10 @@ P4: 9 ms
 P5: 14 ms
 
 Average Waiting Time: 5.4 ms
+
+==============================================
+
+Scheduling Method: Round-Robin Scheduling - Non-Preemptive
+Time Quantum: 12 ms
+Process Waiting Times:
+

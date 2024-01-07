@@ -251,7 +251,6 @@ Job *sortByPriority(Job *head)
     return sorted;
 }
 
-
 void PriorityNonPreemptive(Job *head, const char *outputFile)
 {
     float totalWaitingTime = 0;
@@ -286,9 +285,18 @@ void PriorityNonPreemptive(Job *head, const char *outputFile)
     cout << "Priority Scheduling - Non-Preemptive is Successfully calculated :)" << endl;
 }
 
-
-
-
+void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
+{
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: Round-Robin Scheduling - Non-Preemptive" << endl;
+    myfile << "Time Quantum: " << timeQuantum << " ms" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -380,16 +388,33 @@ int main(int argc, char *argv[])
             }
             else if (option == 3)
             {
-               if (p == "OFF")
+                if (p == "OFF")
                 {
                     loadJobsFromFile(inputFile, jobs);
-                   PriorityNonPreemptive(jobs, outputFile);
+                    PriorityNonPreemptive(jobs, outputFile);
                     freeLinkedList(jobs);
                 }
             }
             else if (option == 4)
             {
-                cout << "Round-Robin Scheduling " << endl;
+                int timeQuantum;
+                cout << "Enter the time quantum for Round-Robin Scheduling: ";
+                cin >> timeQuantum;
+
+                if (timeQuantum <= 0 || cin.fail())
+                {
+                    cout << "Invalid time quantum. Please enter a positive integer." << endl;
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    continue;
+                }
+
+                if (p == "OFF")
+                {
+                    loadJobsFromFile(inputFile, jobs);
+                    roundRobinNonPreemptive(jobs, outputFile, timeQuantum);
+                    freeLinkedList(jobs);
+                }
             }
             else
             {
