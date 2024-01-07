@@ -296,6 +296,55 @@ void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
     myfile << "Time Quantum: " << timeQuantum << " ms" << endl;
     myfile << "Process Waiting Times:\n"
            << endl;
+
+
+             int currentTime = 0;
+
+    while (head != nullptr)
+    {
+        Job* current = head;
+
+        // Process each job for the time quantum or until it finishes
+        while (current != nullptr && current->burstTime > 0)
+        {
+            int executionTime = min(current->burstTime, timeQuantum);
+            current->burstTime -= executionTime;
+
+            current->waiting_time = max(0, currentTime - current->arrivalTime);
+            totalWaitingTime += current->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+            currentTime += executionTime;
+            current = current->next;
+        }
+
+        // Remove finished jobs
+        while (head != nullptr && head->burstTime == 0)
+        {
+            Job* temp = head;
+            head = head->next;
+            delete temp;
+        }
+
+        // Move to the next job
+        if (head != nullptr)
+        {
+            head->waiting_time = max(0, currentTime - head->arrivalTime);
+            totalWaitingTime += head->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << head->waiting_time << " ms" << endl;
+
+            currentTime += timeQuantum;
+            head = head->next;
+        }
+    }
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "Round-Robin Scheduling is Successfully calculated :)" << endl;
 }
 
 int main(int argc, char *argv[])
