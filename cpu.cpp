@@ -223,30 +223,29 @@ void SJFNonPreemptive(Job *head, const char *outputFile)
 Job *sortByPriority(Job *head)
 {
     Job *sorted = nullptr;
+    Job *current = head;
 
-    for (Job *i = head; i != nullptr; i = i->next)
+    while (current != nullptr)
     {
-        Job *lastSorted = nullptr;
-        for (Job *j = head; j != lastSorted && j->next != nullptr; j = j->next)
+        Job *nextJob = current->next;
+
+        if (sorted == nullptr || current->priority < sorted->priority)
         {
-            if (j->next != nullptr && j->priority > j->next->priority)
-            {
-                if (j == head)
-                {
-                    head = j->next;
-                    j->next = head->next;
-                    head->next = j;
-                }
-                else
-                {
-                    Job *temp = j->next;
-                    j->next = temp->next;
-                    temp->next = j;
-                    lastSorted->next = temp;
-                }
-            }
-            lastSorted = j;
+            current->next = sorted;
+            sorted = current;
         }
+        else
+        {
+            Job *temp = sorted;
+            while (temp->next != nullptr && temp->next->priority < current->priority)
+            {
+                temp = temp->next;
+            }
+            current->next = temp->next;
+            temp->next = current;
+        }
+
+        current = nextJob;
     }
 
     return sorted;

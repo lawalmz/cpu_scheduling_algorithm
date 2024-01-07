@@ -43,3 +43,16 @@ Average Waiting Time: 6.8 ms
 Scheduling Method: Priority Scheduling - Non-Preemptive
 Process Waiting Times:
 
+
+==============================================
+
+Scheduling Method: Priority Scheduling - Non-Preemptive
+Process Waiting Times:
+
+P1: 0 ms
+P2: 0 ms
+P3: 4 ms
+P4: 9 ms
+P5: 14 ms
+
+Average Waiting Time: 5.4 ms
