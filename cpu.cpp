@@ -285,7 +285,7 @@ void PriorityNonPreemptive(Job *head, const char *outputFile)
     cout << "Priority Scheduling - Non-Preemptive is Successfully calculated :)" << endl;
 }
 
-void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
+void roundRobinNonPreemptive(Job *&head, const char *outputFile, int timeQuantum)
 {
     float totalWaitingTime = 0;
     int processCount = 0;
@@ -297,14 +297,13 @@ void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
     myfile << "Process Waiting Times:\n"
            << endl;
 
-
-             int currentTime = 0;
+    int currentTime = 0;
 
     while (head != nullptr)
     {
-        Job* current = head;
+        Job *current = head;
 
-        // Process each job for the time quantum or until it finishes
+        
         while (current != nullptr && current->burstTime > 0)
         {
             int executionTime = min(current->burstTime, timeQuantum);
@@ -320,15 +319,7 @@ void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
             current = current->next;
         }
 
-        // Remove finished jobs
-        while (head != nullptr && head->burstTime == 0)
-        {
-            Job* temp = head;
-            head = head->next;
-            delete temp;
-        }
-
-        // Move to the next job
+        
         if (head != nullptr)
         {
             head->waiting_time = max(0, currentTime - head->arrivalTime);
@@ -338,7 +329,16 @@ void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
             myfile << "P" << processCount << ": " << head->waiting_time << " ms" << endl;
 
             currentTime += timeQuantum;
+
+            
+            Job *temp = head;
             head = head->next;
+
+            
+            if (temp->burstTime == 0)
+            {
+                delete temp;
+            }
         }
     }
 
@@ -346,6 +346,7 @@ void roundRobinNonPreemptive(Job *head, const char *outputFile, int timeQuantum)
 
     cout << "Round-Robin Scheduling is Successfully calculated :)" << endl;
 }
+
 
 int main(int argc, char *argv[])
 {

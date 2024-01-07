@@ -80,3 +80,29 @@ P9: 13 ms
 P10: 14 ms
 
 Average Waiting Time: 7.4 ms
+==============================================
+
+Scheduling Method: Round-Robin Scheduling - Non-Preemptive
+Time Quantum: 1 ms
+Process Waiting Times:
+
+P1: 0 ms
+P2: 0 ms
+P3: 1 ms
+P4: 1 ms
+P5: 1 ms
+P6: 5 ms
+P7: 5 ms
+P8: 6 ms
+P9: 6 ms
+P10: 6 ms
+P11: 9 ms
+P12: 10 ms
+P13: 10 ms
+P14: 10 ms
+P15: 13 ms
+P16: 13 ms
+P17: 14 ms
+P18: 14 ms
+
+Average Waiting Time: 6.88889 ms
