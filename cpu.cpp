@@ -252,7 +252,8 @@ void SJFNonPreemptive(Job *head, const char *outputFile)
     cout << "Shortest Job First - Non-Preemptive is Successfully calculated :)" << endl;
 }
 // SJF preemtive mode function
-void SJFPreemptive(Job *&head, const char *outputFile) {
+void SJFPreemptive(Job *&head, const char *outputFile)
+{
     float totalWaitingTime = 0;
     int processCount = 0;
     ofstream myfile(outputFile, ios_base::app);
@@ -269,10 +270,12 @@ void SJFPreemptive(Job *&head, const char *outputFile) {
     Job *current = head;
     Job *prev = nullptr;
 
-    while (current != nullptr) {
+    while (current != nullptr)
+    {
         Job *nextJob = current->next;
 
-        if (nextJob != nullptr && nextJob->arrivalTime <= currentTime) {
+        if (nextJob != nullptr && nextJob->arrivalTime <= currentTime)
+        {
             int executionTime = min(nextJob->burstTime, current->burstTime);
 
             current->waiting_time += currentTime - current->arrivalTime;
@@ -285,18 +288,26 @@ void SJFPreemptive(Job *&head, const char *outputFile) {
             current->burstTime -= executionTime;
 
             // If the current process is not completed, continue with it
-            if (current->burstTime > 0) {
+            if (current->burstTime > 0)
+            {
                 prev = current;
-            } else {
+            }
+            else
+            {
                 // Remove the current node from the list and update the head if needed
-                if (prev == nullptr) {
+                if (prev == nullptr)
+                {
                     head = nextJob;
-                } else {
+                }
+                else
+                {
                     prev->next = nextJob;
                 }
                 delete current;
             }
-        } else {
+        }
+        else
+        {
             current->waiting_time += currentTime - current->arrivalTime;
             totalWaitingTime += current->waiting_time;
             processCount++;
@@ -306,9 +317,12 @@ void SJFPreemptive(Job *&head, const char *outputFile) {
             currentTime += current->burstTime;
 
             // Remove the current node from the list and update the head if needed
-            if (prev == nullptr) {
+            if (prev == nullptr)
+            {
                 head = nextJob;
-            } else {
+            }
+            else
+            {
                 prev->next = nextJob;
             }
             delete current;
@@ -322,7 +336,6 @@ void SJFPreemptive(Job *&head, const char *outputFile) {
 
     cout << "Shortest Job First - Preemptive is Successfully calculated :)" << endl;
 }
-
 
 Job *sortByPriority(Job *head)
 {
@@ -387,6 +400,62 @@ void PriorityNonPreemptive(Job *head, const char *outputFile)
     myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
 
     cout << "Priority Scheduling - Non-Preemptive is Successfully calculated :)" << endl;
+}
+
+void PriorityPreemptive(Job *head, const char *outputFile)
+{
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: Priority Scheduling - Preemptive" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
+
+    // Sort the jobs by priority
+    head = sortByPriority(head);
+
+    int currentTime = 0;
+    Job *current = head;
+
+    while (current != nullptr)
+    {
+        Job *nextJob = current->next;
+
+        // Check for possible preemption
+        if (nextJob != nullptr && nextJob->arrivalTime <= currentTime && nextJob->priority < current->priority)
+        {
+            int executionTime = nextJob->arrivalTime - currentTime;
+
+            current->waiting_time += executionTime;
+            totalWaitingTime += current->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+            currentTime += executionTime;
+        }
+        else
+        {
+            int executionTime = current->burstTime;
+
+            current->waiting_time += max(0, currentTime - current->arrivalTime);
+            totalWaitingTime += current->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+            currentTime += executionTime;
+        }
+
+        // Move to the next job
+        current = nextJob;
+    }
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "Priority Scheduling - Preemptive is Successfully calculated :)" << endl;
 }
 
 void roundRobinNonPreemptive(Job *&head, const char *outputFile, int timeQuantum)
@@ -616,6 +685,12 @@ int main(int argc, char *argv[])
                     PriorityNonPreemptive(jobs, outputFile);
                     freeLinkedList(jobs);
                 }
+                else
+                {
+                    loadJobsFromFile(inputFile, jobs);
+                    PriorityPreemptive(jobs, outputFile);
+                    freeLinkedList(jobs);
+                }
             }
             else if (option == 4)
             {
@@ -636,12 +711,13 @@ int main(int argc, char *argv[])
                     loadJobsFromFile(inputFile, jobs);
                     roundRobinNonPreemptive(jobs, outputFile, timeQuantum);
                     freeLinkedList(jobs);
-                }else{
+                }
+                else
+                {
 
                     loadJobsFromFile(inputFile, jobs);
                     roundRobinPreemptive(jobs, outputFile, timeQuantum);
                     freeLinkedList(jobs);
-
                 }
             }
             else
