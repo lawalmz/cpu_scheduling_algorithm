@@ -10,6 +10,7 @@ compiler is configured to use an older version of C++ (pre-C++11) where range-ba
 #include <fstream>
 #include <limits>
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
@@ -87,14 +88,14 @@ void loadJobsFromFile(const char *inputFile, Job *&head)
     }
 }
 
-void FCFS(Job *head, const char *outputFile)
+void FCFSPreemptive(Job *head, const char *outputFile)
 {
     float totalWaitingTime = 0;
     int processCount = 0;
     ofstream myfile(outputFile, ios_base::app);
     myfile << "\n==============================================\n"
            << endl;
-    myfile << "Scheduling Method: First Come First Serve" << endl;
+    myfile << "Scheduling Method: First Come First Serve- Preemptive" << endl;
     myfile << "Process Waiting Times:\n"
            << endl;
 
@@ -115,7 +116,38 @@ void FCFS(Job *head, const char *outputFile)
 
     myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
 
-    cout << "FCFS is Successfully calculated :)" << endl;
+    cout << "FCFS-Preemptive is Successfully calculated :)" << endl;
+}
+
+void FCFSNonpreemtive(Job *head, const char *outputFile)
+{
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: First Come First Serve - Non-Preemptive" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
+
+    int currentTime = 0;
+    Job *current = head;
+
+    while (current != nullptr)
+    {
+        current->waiting_time = max(0, currentTime - current->arrivalTime);
+        totalWaitingTime += current->waiting_time;
+        processCount++;
+
+        myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+        currentTime += current->burstTime;
+        current = current->next;
+    }
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "FCFS-NonPreemptive is Successfully calculated :)" << endl;
 }
 
 void ShowResult(const char *outputFile)
@@ -219,6 +251,78 @@ void SJFNonPreemptive(Job *head, const char *outputFile)
 
     cout << "Shortest Job First - Non-Preemptive is Successfully calculated :)" << endl;
 }
+// SJF preemtive mode function
+void SJFPreemptive(Job *&head, const char *outputFile) {
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: Shortest Job First - Preemptive" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
+
+    // Sort the jobs by arrival time and burst time
+    head = sortJobsByArrivalAndBurstTime(head);
+
+    int currentTime = 0;
+    Job *current = head;
+    Job *prev = nullptr;
+
+    while (current != nullptr) {
+        Job *nextJob = current->next;
+
+        if (nextJob != nullptr && nextJob->arrivalTime <= currentTime) {
+            int executionTime = min(nextJob->burstTime, current->burstTime);
+
+            current->waiting_time += currentTime - current->arrivalTime;
+            totalWaitingTime += current->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+            currentTime += executionTime;
+            current->burstTime -= executionTime;
+
+            // If the current process is not completed, continue with it
+            if (current->burstTime > 0) {
+                prev = current;
+            } else {
+                // Remove the current node from the list and update the head if needed
+                if (prev == nullptr) {
+                    head = nextJob;
+                } else {
+                    prev->next = nextJob;
+                }
+                delete current;
+            }
+        } else {
+            current->waiting_time += currentTime - current->arrivalTime;
+            totalWaitingTime += current->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+            currentTime += current->burstTime;
+
+            // Remove the current node from the list and update the head if needed
+            if (prev == nullptr) {
+                head = nextJob;
+            } else {
+                prev->next = nextJob;
+            }
+            delete current;
+        }
+
+        // Move to the next job
+        current = nextJob;
+    }
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "Shortest Job First - Preemptive is Successfully calculated :)" << endl;
+}
+
 
 Job *sortByPriority(Job *head)
 {
@@ -303,7 +407,6 @@ void roundRobinNonPreemptive(Job *&head, const char *outputFile, int timeQuantum
     {
         Job *current = head;
 
-        
         while (current != nullptr && current->burstTime > 0)
         {
             int executionTime = min(current->burstTime, timeQuantum);
@@ -319,7 +422,6 @@ void roundRobinNonPreemptive(Job *&head, const char *outputFile, int timeQuantum
             current = current->next;
         }
 
-        
         if (head != nullptr)
         {
             head->waiting_time = max(0, currentTime - head->arrivalTime);
@@ -330,11 +432,9 @@ void roundRobinNonPreemptive(Job *&head, const char *outputFile, int timeQuantum
 
             currentTime += timeQuantum;
 
-            
             Job *temp = head;
             head = head->next;
 
-            
             if (temp->burstTime == 0)
             {
                 delete temp;
@@ -344,10 +444,66 @@ void roundRobinNonPreemptive(Job *&head, const char *outputFile, int timeQuantum
 
     myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
 
-    cout << "Round-Robin Scheduling is Successfully calculated :)" << endl;
+    cout << "Round-Robin non-preemtive Scheduling is Successfully calculated :)" << endl;
 }
 
+void roundRobinPreemptive(Job *&head, const char *outputFile, int timeQuantum)
+{
+    float totalWaitingTime = 0;
+    int processCount = 0;
+    ofstream myfile(outputFile, ios_base::app);
+    myfile << "\n==============================================\n"
+           << endl;
+    myfile << "Scheduling Method: Round-Robin Scheduling - Preemptive" << endl;
+    myfile << "Time Quantum: " << timeQuantum << " ms" << endl;
+    myfile << "Process Waiting Times:\n"
+           << endl;
 
+    int currentTime = 0;
+
+    while (head != nullptr)
+    {
+        Job *current = head;
+
+        while (current != nullptr && current->burstTime > 0)
+        {
+            int executionTime = min(current->burstTime, timeQuantum);
+            current->burstTime -= executionTime;
+
+            current->waiting_time = max(0, currentTime - current->arrivalTime);
+            totalWaitingTime += current->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << current->waiting_time << " ms" << endl;
+
+            currentTime += executionTime;
+            current = current->next;
+        }
+
+        if (head != nullptr)
+        {
+            head->waiting_time = max(0, currentTime - head->arrivalTime);
+            totalWaitingTime += head->waiting_time;
+            processCount++;
+
+            myfile << "P" << processCount << ": " << head->waiting_time << " ms" << endl;
+
+            currentTime += timeQuantum;
+
+            Job *temp = head;
+            head = head->next;
+
+            if (temp->burstTime == 0)
+            {
+                delete temp;
+            }
+        }
+    }
+
+    myfile << "\nAverage Waiting Time: " << totalWaitingTime / processCount << " ms" << endl;
+
+    cout << "Round-Robin preemtive Scheduling is Successfully calculated :)" << endl;
+}
 int main(int argc, char *argv[])
 {
     int choice;
@@ -423,9 +579,19 @@ int main(int argc, char *argv[])
 
             if (option == 1)
             {
-                loadJobsFromFile(inputFile, jobs);
-                FCFS(jobs, outputFile);
-                freeLinkedList(jobs);
+                if (p == "OFF")
+                {
+                    loadJobsFromFile(inputFile, jobs);
+                    FCFSNonpreemtive(jobs, outputFile);
+                    freeLinkedList(jobs);
+                }
+                else
+                {
+
+                    loadJobsFromFile(inputFile, jobs);
+                    FCFSPreemptive(jobs, outputFile);
+                    freeLinkedList(jobs);
+                }
             }
             else if (option == 2)
             {
@@ -433,6 +599,12 @@ int main(int argc, char *argv[])
                 {
                     loadJobsFromFile(inputFile, jobs);
                     SJFNonPreemptive(jobs, outputFile);
+                    freeLinkedList(jobs);
+                }
+                else
+                {
+                    loadJobsFromFile(inputFile, jobs);
+                    SJFPreemptive(jobs, outputFile);
                     freeLinkedList(jobs);
                 }
             }
@@ -464,6 +636,12 @@ int main(int argc, char *argv[])
                     loadJobsFromFile(inputFile, jobs);
                     roundRobinNonPreemptive(jobs, outputFile, timeQuantum);
                     freeLinkedList(jobs);
+                }else{
+
+                    loadJobsFromFile(inputFile, jobs);
+                    roundRobinPreemptive(jobs, outputFile, timeQuantum);
+                    freeLinkedList(jobs);
+
                 }
             }
             else

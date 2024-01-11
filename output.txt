@@ -106,3 +106,28 @@ P17: 14 ms
 P18: 14 ms
 
 Average Waiting Time: 6.88889 ms
+==============================================
+
+Scheduling Method: First Come First Serve- Preemptive
+Process Waiting Times:
+
+P1: 0 ms
+P2: 4 ms
+P3: 8 ms
+P4: 10 ms
+P5: 13 ms
+
+Average Waiting Time: 7 ms
+
+==============================================
+
+Scheduling Method: Shortest Job First - Preemptive
+Process Waiting Times:
+
+P1: 0 ms
+P2: 4 ms
+P3: 7 ms
+P4: 10 ms
+P5: 12 ms
+
+Average Waiting Time: 6.6 ms
